@@ -1,30 +1,8 @@
-import { useEffect, useState } from 'react';
-import { coursesApi } from '../../api/courses';
+import { useCourses } from '../../hooks/useCourses';
 import { CourseCard } from '../molecules/CourseCard';
 
 export const CourseList = () => {
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        setLoading(true);
-        // Supongo que el backend devuelve { data: [...] } o [...] directo
-        const response = await coursesApi.getAll(); 
-        const coursesData = response.data || response;
-        setCourses(Array.isArray(coursesData) ? coursesData : []);
-      } catch (err) {
-        console.error('Error fetching courses:', err);
-        setError('No se pudieron cargar los cursos. Verifica que el backend esté corriendo.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourses();
-  }, []);
+  const { courses, loading, error } = useCourses();
 
   if (loading) {
     return (
@@ -47,9 +25,9 @@ export const CourseList = () => {
       {courses.map((course) => (
         <CourseCard 
           key={course._id || course.id} 
-          title={course.title} 
-          description={course.description} 
-          capacity={course.capacity} 
+          name={course.name} 
+          division={course.division} 
+          cupoMaximo={course.cupoMaximo} 
         />
       ))}
     </div>

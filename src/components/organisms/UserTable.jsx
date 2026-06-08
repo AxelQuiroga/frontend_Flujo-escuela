@@ -1,29 +1,8 @@
-import { useEffect, useState } from 'react';
-import { usersApi } from '../../api/users';
+import { useUsers } from '../../hooks/useUsers';
 import { UserRow } from '../molecules/UserRow';
 
 export const UserTable = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        const response = await usersApi.getAll();
-        const usersData = response.data || response;
-        setUsers(Array.isArray(usersData) ? usersData : []);
-      } catch (err) {
-        console.error('Error fetching users:', err);
-        setError('Error al cargar los usuarios. Verifica que el backend esté corriendo.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
+  const { users, loading, error } = useUsers();
 
   if (loading) {
     return (

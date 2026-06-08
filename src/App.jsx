@@ -1,17 +1,19 @@
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { CoursesPage } from './pages/CoursesPage';
 import { UsersPage } from './pages/UsersPage';
 import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
+import { PrivateRoute } from './components/atoms/PrivateRoute';
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation(); // Re-evalúa el componente en cada cambio de ruta
   
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
   };
 
+  // Gracias a useLocation, esto se actualiza automáticamente al navegar a /courses después del login
   const isAuthenticated = !!localStorage.getItem('token');
 
   return (
@@ -22,8 +24,13 @@ function App() {
             <h1 className="text-2xl font-bold tracking-tight">LMS Manager</h1>
             <nav className="flex gap-4 text-blue-100 font-medium">
               <Link to="/" className="hover:text-white transition-colors">Inicio</Link>
-              <Link to="/courses" className="hover:text-white transition-colors">Cursos</Link>
-              <Link to="/users" className="hover:text-white transition-colors">Usuarios</Link>
+              {isAuthenticated && (
+                <>
+                  <Link to="/courses" className="hover:text-white transition-colors">Cursos</Link>
+                  <Link to="/users" className="hover:text-white transition-colors">Usuarios</Link>
+                  <Link to="/grades" className="hover:text-white transition-colors">Notas</Link>
+                </>
+              )}
             </nav>
           </div>
           <div>
@@ -31,8 +38,7 @@ function App() {
               <button onClick={handleLogout} className="text-sm bg-blue-700 hover:bg-blue-800 px-3 py-1 rounded cursor-pointer transition-colors">Cerrar Sesión</button>
             ) : (
               <div className="flex gap-2">
-                <Link to="/login" className="text-sm text-blue-100 hover:text-white px-2 py-1 transition-colors font-medium">Iniciar Sesión</Link>
-                <Link to="/register" className="text-sm bg-white text-blue-600 hover:bg-gray-100 px-3 py-1 rounded transition-colors font-semibold">Registrarse</Link>
+                <Link to="/login" className="text-sm bg-white text-blue-600 hover:bg-gray-100 px-4 py-1.5 rounded transition-colors font-semibold">Iniciar Sesión</Link>
               </div>
             )}
           </div>
@@ -43,10 +49,9 @@ function App() {
         <Routes>
           <Route path="/" element={<div className="text-center py-20"><h2 className="text-2xl font-bold text-gray-800">Bienvenido al Dashboard</h2><p className="text-gray-500 mt-2">Selecciona una opción en el menú</p></div>} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/courses" element={<CoursesPage />} />
-          <Route path="/users" element={<UsersPage />} />
-          <Route path="/grades" element={<h2 className="text-xl font-semibold">Notas (WIP)</h2>} />
+          <Route path="/courses" element={<PrivateRoute><CoursesPage /></PrivateRoute>} />
+          <Route path="/users" element={<PrivateRoute><UsersPage /></PrivateRoute>} />
+          <Route path="/grades" element={<PrivateRoute><h2 className="text-xl font-semibold">Notas (WIP)</h2></PrivateRoute>} />
         </Routes>
       </main>
     </div>

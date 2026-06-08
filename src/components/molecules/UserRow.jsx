@@ -13,7 +13,7 @@ export const UserRow = ({ user }) => {
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>
+        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === 'DIRECTOR' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>
           {user.role || 'user'}
         </span>
       </td>
